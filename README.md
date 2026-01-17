@@ -1,44 +1,45 @@
 # 🌉 KeyBridge Ultimate
 
-**KeyBridge** is a powerful, lightweight utility to control your Android device from your Windows PC using purely ADB. 
+![Platform](https://img.shields.io/badge/platform-Windows-0078D6?style=flat-square&logo=windows&logoColor=white)
+![Python](https://img.shields.io/badge/python-3.x-blue?style=flat-square&logo=python&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
+![Status](https://img.shields.io/badge/status-Stable-success?style=flat-square)
 
-**No Android App required. No Root required.**
+**KeyBridge** is a powerful, lightweight desktop utility that lets you control your Android device directly from your Windows PC using your mouse and keyboard.
 
-![License](https://img.shields.io/badge/license-MIT-blue)
-![Platform](https://img.shields.io/badge/platform-Windows-lightgrey)
+It works entirely over ADB (Android Debug Bridge), which means **no app installation is required on your phone**, and no root is needed. Just plug and play! 🚀
+
+---
 
 ## ✨ Features
 
-- **🎮 Remote Control:** Type on your phone using your PC keyboard (Zero latency).
-- **📡 Wireless Mode:** Switch from USB to Wi-Fi with a built-in Connection Wizard.
-- **📂 File Beam:** Push APKs, PDFs, or images to your phone's Download folder instantly.
-- **📋 Smart Clipboard:** Paste text from PC to Phone and vice versa.
-- **🇮🇳 UPI Support:** Generate QR codes to receive payments quickly.
-- **🔔 Notification Sync:** Get Android notifications on your Windows desktop.
+KeyBridge isn't just a keyboard; it's a complete control center for your phone.
 
-## 🚀 How to Use
+* **🎮 Zero-Latency Typing:** Use your PC keyboard to type on your phone instantly. Great for long messages or emails.
+* **📡 Wireless Wizard:** Switch from USB to Wi-Fi connection with a single click. No command-line knowledge needed.
+* **📂 File Beam:** Drag & drop files (APKs, PDFs, Images) from your PC to your phone's Download folder.
+* **📋 Smart Clipboard:** Seamlessly paste text from your PC clipboard to your phone.
+* **🔔 Notification Sync:** See your Android notifications (WhatsApp, SMS, etc.) pop up right on your Windows desktop.
+* **🇮🇳 UPI Helper:** Quickly generate QR codes for payments to share with others.
 
-1. **Download:** Go to the [Releases Page](../../releases) and download `KeyBridge.exe`.
-2. **Connect:** Plug in your Android phone via USB.
-3. **Enable Debugging:** Make sure "USB Debugging" is on in Developer Options.
-4. **Run:** Double-click `KeyBridge.exe`.
-5. **Enjoy:** Type away! Use `F12` to toggle keyboard capture.
+## 🚀 Installation & Usage
 
-## 🛠️ Built With
+### Option A: The Easy Way (Recommended)
+1.  Go to the **[Releases Page](../../releases)**.
+2.  Download the latest `KeyBridge.exe`.
+3.  Connect your Android phone via USB.
+4.  Run the app! (Ensure "USB Debugging" is enabled on your phone).
 
-- **Python** (Core Logic)
-- **Tkinter** (GUI)
-- **ADB** (Android Debug Bridge)
+### Option B: For Developers (Source Code)
+If you want to tweak the code or run it via Python:
 
-## ☕ Support the Developer
+```bash
+# Clone the repository
+git clone [https://github.com/nvsict06/KeyBridge.git](https://github.com/nvsict06/KeyBridge.git)
+cd KeyBridge
 
-If this tool saved you time, consider buying me a coffee!
+# Install dependencies
+pip install -r requirements.txt
 
-<a href="https://buymeacoffee.com/mohittarkar">
-  <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=mohittarkar&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" />
-</a>
-
-Or via **UPI**: `PINKEE2@PTYES`
-
----
-*Created by Mohit Tarkar*
+# Run the app
+python main.py
