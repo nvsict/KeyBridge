@@ -35,7 +35,7 @@ If you want to tweak the code or run it via Python:
 
 ```bash
 # Clone the repository
-git clone [https://github.com/nvsict06/KeyBridge.git](https://github.com/nvsict06/KeyBridge.git)
+git clone [https://github.com/nvsict/KeyBridge.git](https://github.com/nvsict/KeyBridge.git)
 cd KeyBridge
 
 # Install dependencies
