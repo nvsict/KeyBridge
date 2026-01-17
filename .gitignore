@@ -1,0 +1,19 @@
+# Ignore Build Folders
+build/
+dist/
+*.spec
+
+# Ignore Python Cache
+__pycache__/
+*.py[cod]
+
+# Ignore User Configuration (Privacy!)
+user_config.json
+
+# Ignore Virtual Environments
+venv/
+env/
+
+# (Optional) specific system files
+.DS_Store
+Thumbs.db
