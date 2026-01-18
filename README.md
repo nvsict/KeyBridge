@@ -1,97 +1,49 @@
-# 🚀 KeyBridge Ultimate
+# 🌉 KeyBridge Pro (v1.2)
+**The Ultimate PC-to-Android Keyboard Bridge**
 
-![Platform](https://img.shields.io/badge/platform-Windows-0078D6?style=flat-square&logo=windows&logoColor=white)
-![Python](https://img.shields.io/badge/python-3.x-blue?style=flat-square&logo=python&logoColor=white)
-![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
+KeyBridge allows you to type on your Android device using your PC keyboard. It works over **USB** or **Wi-Fi**, features a **Zero-Lag Input Engine**, and includes a **Global Hotkey** with a Heads-Up Display (HUD) so you can type without looking away.
 
-**KeyBridge Ultimate** solves a simple but incredibly annoying problem: **Typing on a phone screen is slow.**
-
-Instead of pairing a Bluetooth keyboard or buying expensive hardware switches, KeyBridge lets you use your **existing wired PC keyboard** to type directly on your Android device.
-
----
-
-## ✨ The MVP Magic: The Toggle That Changes Everything
-
-KeyBridge runs silently in the background of your PC. 
-
-When you need to reply to a WhatsApp message, write an email, or enter a long password on your phone, just press **`F12`**.
-
-* **🔁 Instantly**, your PC keyboard input is redirected to your Android phone.
-* Type at **full speed**, with **zero noticeable latency**.
-* Press **`ESC`** (or `F12` again) to instantly switch back to controlling your PC.
-
-It feels like having a physical hardware switch for your keyboard — but it’s **100% software**.
+![Python](https://img.shields.io/badge/Made%20with-Python-blue?style=for-the-badge&logo=python)
+![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?style=for-the-badge&logo=windows)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
 ---
 
-## 🔑 Key Features
-
-### ⌨️ The "Magic Toggle" (F12)
-Seamlessly switch your keyboard input between your PC and your Phone in milliseconds. No pairing mode, no waiting.
-
-### ⚡ Zero Latency
-Uses raw ADB hardware events, not Bluetooth. Typing feels as responsive as plugging your keyboard directly into the phone's USB port.
-
-### 🚫 No App Required
-Works entirely through ADB (Android Debug Bridge). **You do not need to install any app on your Android device.**
-
-### 📡 Wireless Mode
-Start with USB, then switch to Wi-Fi mode. Keep typing wirelessly even after unplugging the cable.
-
-### 📂 File Beam
-Drag & drop files (APKs, images, documents) from your PC straight into your phone’s `Download` folder.
-
-### 📋 Clipboard Sync
-Copy text on Windows, paste it instantly on Android.
-
-### 🔔 Notification Mirror (Bonus)
-View your phone’s incoming notifications directly on your PC screen while you work, so you never miss a beat.
+## 🚀 New in v1.2 (The Ultimate Update)
+* **⚡ Zero-Lag Typing:** New "Smart Batching" engine groups keystrokes for instant text input.
+* **🪄 Wireless Wizard:** One-click tool to switch from USB to Wi-Fi mode automatically.
+* **🔓 Android 11+ Pairing:** Support for "Pair with Code" – connect wirelessly without ever touching a USB cable.
+* **🕶️ Global Hotkey & HUD:** Press **`Ctrl + F12`** anywhere to toggle typing mode. A floating red HUD keeps you informed.
+* **📋 Clipboard Beam:** Support for multi-line text, poems, and code snippets.
+* **🎨 UX Polish:** New Splash Screen, High-DPI scaling, and System Tray integration.
 
 ---
 
-## ❓ Why KeyBridge?
-
-**The Problem: Context Switching**
-You are deep in work on your PC, and a long message arrives on your phone. Picking it up, unlocking it, and thumb-typing a reply breaks your flow completely.
-
-**The Solution: Stay in the Zone**
-With KeyBridge Ultimate, your hands never leave the keyboard.
-1. Press **`F12`**
-2. Type your reply
-3. Press **`F12`** again
-4. Keep working.
-
-No distractions. No interruptions. Just flow.
+## ✨ Features
+* **Type Anywhere:** Works in WhatsApp, Chrome, Notes, Terminal, etc.
+* **Soft Keys:** Control Home, Back, and App Switcher from your PC.
+* **File Beam:** Push files directly to your phone's Download folder.
+* **System Tray:** Minimizes to tray to keep your taskbar clean.
+* **Auto-Recovery:** Detects connection drops and stabilizes the link automatically.
 
 ---
 
-## 🛠 Technical Highlights
+## 📥 Installation
 
-* **Core:** Python 3.10+
-* **Input Handling:** `pynput` for capturing global hotkeys and redirecting raw key events.
-* **Backend:** Pure ADB Shell implementation (Subprocess management).
-* **Packaging:** Standalone `.exe` — **No Python installation required for end users.**
+### Option A: Download (Recommended)
+1.  Go to the [**Releases Page**](https://github.com/nvsict06/KeyBridge/releases).
+2.  Download the latest `KeyBridge.exe`.
+3.  Run it! (No installation required).
 
----
+### Option B: Run from Source
+If you are a developer, you can run the raw Python code:
+```bash
+# 1. Clone the repo
+git clone [https://github.com/nvsict/KeyBridge.git](https://github.com/nvsict/KeyBridge.git)
+cd KeyBridge
 
-## ☕ Support the Development
+# 2. Install dependencies
+pip install -r requirements.txt
 
-KeyBridge is free and open-source. If this tool saved you time or improved your workflow, consider buying me a coffee!
-
-<div align="center">
-
-<a href="https://buymeacoffee.com/mohittarkar">
-  <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=mohittarkar&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" />
-</a>
-
-<br><br>
-
-**Or via UPI (India):** `PINKEE2@PTYES`
-
-</div>
-
----
-
-<p align="center">
-  Made with ❤️ by <b>Mohit Tarkar</b>
-</p>
+# 3. Run
+python main.py
