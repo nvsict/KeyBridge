@@ -19,11 +19,10 @@ class ADBEngine:
     # --- CONNECTION MANAGEMENT ---
     def connect(self, device_id):
         self.stop()
-        
-        # Sanitize input
         device_id = device_id.strip()
 
         # Handle IP-only input (add port if missing)
+        # e.g. "192.168.1.5" -> "192.168.1.5:5555"
         if re.match(r"^\d+\.\d+\.\d+\.\d+$", device_id):
              device_id = f"{device_id}:5555"
              self._run_adb_silent(["connect", device_id])
@@ -36,9 +35,9 @@ class ADBEngine:
                 cmd, 
                 stdin=subprocess.PIPE, 
                 stdout=subprocess.DEVNULL, 
-                stderr=subprocess.PIPE,  # Capture errors this time
+                stderr=subprocess.PIPE,  # Capture errors to debug crashes
                 text=True, 
-                bufsize=0,
+                bufsize=0, # Unbuffered for speed
                 creationflags=self.NO_WINDOW
             )
             
@@ -60,49 +59,23 @@ class ADBEngine:
             self.log(f"[+] Connected to {device_id}")
             self.update_status(True)
             return True
-            
         except Exception as e:
             self.log(f"[!] Engine Error: {e}")
             self.update_status(False)
             return False
 
-    def enable_wireless(self):
-        """Restarts ADB in TCP mode on port 5555."""
-        self.log("[*] Switching to TCP mode...")
-        try:
-            self._run_adb_silent(["tcpip", "5555"])
-            self.log("[+] ADB restarted on Port 5555.")
-        except Exception as e:
-            self.log(f"[!] Failed to switch mode: {e}")
-
-    def connect_wireless_ip(self, ip):
-        """Connects to a specific IP."""
-        ip = ip.strip()
-        target = ip if ":" in ip else f"{ip}:5555"
-            
-        self.log(f"[*] Connecting to {target}...")
-        try:
-            res = self._run_adb_capture(["connect", target])
-            output = res.strip()
-            self.log(output)
-            return "connected" in output.lower()
-        except Exception as e:
-            self.log(f"[!] Connection failed: {e}")
-            return False
-        
-    # --- NEW: ANDROID 11+ PAIRING ---
+    # --- WIRELESS FEATURES ---
     def pair_device(self, ip_port, code):
-        """
+        """ 
         Runs 'adb pair ip:port code'. 
         Used for Android 11+ connection without USB.
         """
         self.log(f"[*] Pairing with {ip_port}...")
         try:
-            # adb pair 192.168.1.5:33333 123456
             res = subprocess.run(
                 [ADB_PATH, "pair", ip_port, code],
-                capture_output=True,
-                text=True,
+                capture_output=True, 
+                text=True, 
                 creationflags=self.NO_WINDOW
             )
             output = res.stdout.strip() + res.stderr.strip()
@@ -113,20 +86,22 @@ class ADBEngine:
             return False
 
     def setup_wireless_auto(self):
-        """ The Smart Wizard: Get IP -> TCPIP -> Connect -> Verify """
-        
+        """ 
+        The Smart Wizard: 
+        1. Find IP -> 2. Switch to TCP Mode -> 3. Wait -> 4. Connect -> 5. Verify 
+        """
         def _sequence():
             self.log("Step 1/4: Finding IP address...")
             ip = self.get_device_ip()
             
             if not ip:
-                self.log("[!] Could not find IP. Connect phone to Wi-Fi.")
+                self.log("[!] IP not found. Connect phone to Wi-Fi.")
                 return
             
             # Warn if it looks like a USB tethering IP (often 192.0.0.x)
             if ip.startswith("192.0.0"):
-                self.log(f"[⚠] Warning: {ip} might be a USB Tethering IP.")
-                self.log("    If you unplug USB, this link might break.")
+                self.log(f"[⚠] Warning: {ip} looks like a USB Tethering IP.")
+                self.log("    Wireless mode might fail if you unplug USB.")
 
             self.log(f"Step 2/4: Found IP {ip}. Enabling TCP Mode...")
             self._run_adb_silent(["tcpip", "5555"])
@@ -167,6 +142,21 @@ class ADBEngine:
 
         threading.Thread(target=_sequence, daemon=True).start()
 
+    def connect_wireless_ip(self, ip):
+        """ Manually connect to a specific IP """
+        ip = ip.strip()
+        target = ip if ":" in ip else f"{ip}:5555"
+            
+        self.log(f"[*] Connecting to {target}...")
+        try:
+            res = self._run_adb_capture(["connect", target])
+            output = res.strip()
+            self.log(output)
+            return "connected" in output.lower()
+        except Exception as e:
+            self.log(f"[!] Connection failed: {e}")
+            return False
+
     def get_device_ip(self):
         """ Tries multiple ways to get the WLAN IP """
         try:
@@ -183,7 +173,50 @@ class ADBEngine:
 
         return None
 
-    # --- UTILS ---
+    # --- TEXT & FILE HANDLING ---
+    def send_text(self, text):
+        """ 
+        Handles multi-line text by splitting into lines, 
+        sanitizing characters, and pressing Enter between lines.
+        OPTIMIZED: Does not log every keystroke to save CPU.
+        """
+        if not self.running or not text: return
+
+        # 1. Split text into separate lines (preserving structure)
+        lines = text.split('\n')
+
+        for i, line in enumerate(lines):
+            # A. Sanitize specific line
+            # Escape backslashes first!
+            safe_line = str(line).replace("\\", "\\\\")
+            # Escape quotes
+            safe_line = safe_line.replace('"', '\\"').replace("'", "\\'")
+            # Escape shell metacharacters
+            for char in '()<>|;&*~`$#[]!':
+                safe_line = safe_line.replace(char, f"\\{char}")
+            # Replace spaces with %s (ADB magic)
+            safe_line = safe_line.replace(" ", "%s")
+
+            # B. Send the text content
+            if safe_line:
+                self.queue.put(f"input text {safe_line}")
+            
+            # C. If there are more lines coming, press ENTER to move down
+            if i < len(lines) - 1:
+                self.queue.put("input keyevent 66") # 66 = ENTER
+
+    def push_file(self, local_path):
+        filename = os.path.basename(local_path)
+        remote_path = f"/sdcard/Download/{filename}"
+        self.log(f"[*] Sending {filename}...")
+        
+        def _push_thread():
+            self._run_adb_silent(["push", local_path, remote_path])
+            self.log(f"[+] Sent: {filename}")
+            
+        threading.Thread(target=_push_thread, daemon=True).start()
+
+    # --- CORE UTILS ---
     def _run_adb_silent(self, args):
         try:
             subprocess.run([ADB_PATH] + args, creationflags=self.NO_WINDOW)
@@ -199,17 +232,6 @@ class ADBEngine:
             )
             return res.stdout.strip()
         except: return ""
-
-    def push_file(self, local_path):
-        filename = os.path.basename(local_path)
-        remote_path = f"/sdcard/Download/{filename}"
-        self.log(f"[*] Sending {filename}...")
-        
-        def _push_thread():
-            self._run_adb_silent(["push", local_path, remote_path])
-            self.log(f"[+] Sent: {filename}")
-            
-        threading.Thread(target=_push_thread, daemon=True).start()
 
     # --- CORE WORKER ---
     def _worker(self):
@@ -227,11 +249,6 @@ class ADBEngine:
 
     def send_cmd(self, adb_cmd):
         if self.running: self.queue.put(adb_cmd)
-
-    def send_text(self, text):
-        if not self.running: return
-        safe_text = shlex.quote(text)
-        self.queue.put(f"input text {safe_text}")
 
     def stop(self):
         self.running = False
